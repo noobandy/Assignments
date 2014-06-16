@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ListViewSample</string>
+    <string name="action_settings">Settings</string>
+    <string name="label_add_person">Add</string>
+    <string name="hint_person_name">Anand Mohan</string>
+    <string name="person_name_text_color">#FF0040</string>
+
+</resources>
