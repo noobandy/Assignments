@@ -20,7 +20,7 @@
  * -Changed package name
  */
 
-package in.anandm.thoughts.util;
+package in.anandm.android.apps.thoughts.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ import android.util.Log;
  * thread safe.
  */
 public class SelectionBuilder {
-	private static final String TAG = "feedbacksyncadapter";
+	private static final String TAG = "SelectionBuilder";
 
 	private String mTable = null;
 	private Map<String, String> mProjectionMap = new HashMap<String, String>();

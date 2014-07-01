@@ -1,12 +1,15 @@
-package in.anandm.thoughts.ui;
+package in.anandm.android.apps.thoughts.ui;
 
+import in.anandm.android.apps.thoughts.provider.UserThoughtsContract;
 import in.anandm.android.utils.validator.BindingErrorRenderer;
 import in.anandm.android.utils.validator.BindingResults;
 import in.anandm.android.utils.validator.TextViewBindingErrorRenderer;
 import in.anandm.android.utils.validator.ValidationUtils;
 import in.anandm.thoughts.R;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -21,6 +24,7 @@ public class SignUpFormActivity extends Activity {
 	private EditText firstName = null;
 	private EditText lastName = null;
 	private EditText email = null;
+	private EditText username = null;
 	private EditText password = null;
 	private EditText confirmPassword = null;
 	private Spinner country = null;
@@ -34,6 +38,7 @@ public class SignUpFormActivity extends Activity {
 		firstName = (EditText) findViewById(R.id.firstName);
 		lastName = (EditText) findViewById(R.id.lastName);
 		email = (EditText) findViewById(R.id.email);
+		username = (EditText) findViewById(R.id.username);
 		password = (EditText) findViewById(R.id.password);
 		confirmPassword = (EditText) findViewById(R.id.confirmPassword);
 		male = (RadioButton) findViewById(R.id.gender_male);
@@ -62,21 +67,65 @@ public class SignUpFormActivity extends Activity {
 		BindingErrorRenderer bindingErrorRenderer = new TextViewBindingErrorRenderer();
 
 		BindingResults results = new BindingResults(bindingErrorRenderer, this);
+
 		ValidationUtils.rejectIfEmptyOrWhitespace(results, firstName,
 				"First Name is required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(results, lastName,
 				"Last Name is required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(results, email,
 				"Email is required");
+		ValidationUtils.rejectIfEmptyOrWhitespace(results, username,
+				"User Name is required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(results, password,
 				"Password is required");
+		ValidationUtils.rejectIfEmptyOrWhitespace(results, confirmPassword,
+				"Password is required");
+
+		// check is user name is available
+		String userName = username.getText().toString();
+
+		Cursor cursor = getContentResolver().query(
+				UserThoughtsContract.User.CONTENT_URI,
+				new String[] { UserThoughtsContract.User.COLUMN_ID },
+				UserThoughtsContract.User.COLUMN_USER_NAME + " = ?",
+				new String[] { userName }, null);
+
+		if (cursor.moveToFirst()) {
+			results.rejectValue(username, "User Name already in use");
+		}
+
 		if (results.isValid()) {
+
 			String sex = null;
 			if (male.isChecked()) {
 				sex = "Male";
 			} else {
 				sex = "Female";
 			}
+
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(UserThoughtsContract.User.COLUMN_COUNTRY,
+					country.getSelectedItemId());
+			contentValues.put(UserThoughtsContract.User.COLUMN_EMAIL, email
+					.getText().toString());
+			contentValues.put(UserThoughtsContract.User.COLUMN_FIRST_NAME,
+					firstName.getText().toString());
+			contentValues.put(UserThoughtsContract.User.COLUMN_LAST_NAME,
+					lastName.getText().toString());
+			contentValues.put(UserThoughtsContract.User.COLUMN_PASSWORD,
+					password.getText().toString());
+			contentValues.put(UserThoughtsContract.User.COLUMN_SEX, sex);
+			contentValues.put(UserThoughtsContract.User.COLUMN_USER_NAME,
+					username.getText().toString());
+
+			//insert user details
+			getContentResolver().insert(UserThoughtsContract.User.CONTENT_URI,
+					contentValues);
+
+			//return to main activity
+			Intent loginIntent = new Intent(this, MainActivity.class);
+
+			startActivity(loginIntent);
 		}
 	}
 }

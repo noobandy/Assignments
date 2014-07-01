@@ -20,6 +20,13 @@
     <string name="hint_email">anandm@mkcl.org</string>
     <string name="hint_password">Password</string>
     <string name="hint_confirm_password">Confirm</string>
+    <string name="description_refresh">Refresh</string>
+    <string name="description_add">Add</string>
+    <string name="description_edit">Edit</string>
+    <string name="description_remove">Remove</string>
+    <string name="description_save">Save</string>
+    <string name="description_discard">Discard</string>
+    <string name="no_thoughts">No thoughts!!!</string>
 
     <string-array name="countries">
         <item>India</item>
@@ -28,5 +35,13 @@
         <item>Bhutan</item>
         <item>Nepal</item>
     </string-array>
+
+    <string name="label_sign_in">Sign In</string>
+    <string name="hint_user_name">username</string>
+    <string name="app_description_text">User Thoughts</string>
+    <string name="title_activity_thought_list">ThoughtListActivity</string>
+    <string name="label_user_name">User Name</string>
+    <string name="title_activity_thought">ThoughtActivity</string>
+    <string name="hint_thought">Your thoughts</string>
 
 </resources>
