@@ -11,11 +11,16 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.SimpleCursorAdapter;
 
 public class ThoughtListActivity extends ListActivity implements
-		LoaderCallbacks<Cursor> {
+		LoaderCallbacks<Cursor>, OnQueryTextListener {
 	private SimpleCursorAdapter adapter;
+	private String mCurFilter = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +33,17 @@ public class ThoughtListActivity extends ListActivity implements
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.thought_list, menu);
+
+		getActionBar().setDisplayHomeAsUpEnabled(false);
+
+		SearchView searchView = (SearchView) menu.findItem(
+				R.id.menu_search_view).getActionView();
+
+		searchView.setOnQueryTextListener(this);
+		searchView.setIconifiedByDefault(true); 
 		return true;
 	}
 
-	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -39,12 +51,31 @@ public class ThoughtListActivity extends ListActivity implements
 			Intent addThoughtIntent = new Intent(this, ThoughtActivity.class);
 			startActivity(addThoughtIntent);
 			break;
+		case R.id.menu_refresh:
+			getLoaderManager().restartLoader(0, null, this);
+			break;
+		case R.id.action_settings:
+			Intent settingsIntent = new Intent(this, SettingsActivity.class);
+			startActivity(settingsIntent);
+			break;	
 
 		default:
 			break;
 		}
-		
+
 		return true;
+	}
+
+	// Opens the second activity if a feedback is clicked
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+
+		Intent i = new Intent(this, ThoughtActivity.class);
+
+		i.putExtra("thoughtId", id);
+
+		startActivity(i);
 	}
 
 	private void fillData() {
@@ -55,12 +86,11 @@ public class ThoughtListActivity extends ListActivity implements
 				UserThoughtsContract.Thought.COLUMN_THOUGHT,
 				UserThoughtsContract.Thought.COLUMN_AUTHOR };
 		// Fields on the UI to which we map
-		int[] to = new int[] { android.R.id.text1,
-				android.R.id.text2 };
+		int[] to = new int[] {R.id.textViewThoughtSummary, R.id.textViewThoughtAuthor};
 
 		getLoaderManager().initLoader(0, null, this);
-		adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, null, from,
-				to, 0);
+		adapter = new SimpleCursorAdapter(this,
+				R.layout.thought_list_row, null, from, to, 0);
 		setListAdapter(adapter);
 	}
 
@@ -71,7 +101,7 @@ public class ThoughtListActivity extends ListActivity implements
 				UserThoughtsContract.Thought.COLUMN_THOUGHT,
 				UserThoughtsContract.Thought.COLUMN_AUTHOR };
 		CursorLoader cursorLoader = new CursorLoader(this,
-				UserThoughtsContract.Thought.CONTENT_URI, projection, null,
+				UserThoughtsContract.Thought.CONTENT_URI, projection, mCurFilter,
 				null, null);
 		return cursorLoader;
 	}
@@ -86,6 +116,19 @@ public class ThoughtListActivity extends ListActivity implements
 	public void onLoaderReset(Loader<Cursor> loader) {
 		// data is not available anymore, delete reference
 		adapter.swapCursor(null);
+	}
+
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		mCurFilter = UserThoughtsContract.Thought.COLUMN_THOUGHT + " like '%"
+				+ newText + "%'";
+		getLoaderManager().restartLoader(0, null, this);
+		return true;
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		return true;
 	}
 
 }

@@ -23,12 +23,22 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="in.anandm.android.apps.thoughts.ui.SignUpFormActivity"
+            android:label="@string/title_activity_sign_up_details" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.anandm.android.apps.thoughts.ui.MainActivity" />
+        </activity>
+        <activity
             android:name="in.anandm.android.apps.thoughts.ui.ThoughtListActivity"
             android:label="@string/title_activity_thought_list" >
         </activity>
         <activity
-            android:name="in.anandm.android.apps.thoughts.ui.SignUpFormActivity"
-            android:label="@string/title_activity_sign_up_details" >
+            android:name="in.anandm.android.apps.thoughts.ui.ThoughtActivity"
+            android:label="@string/title_activity_thought" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.anandm.android.apps.thoughts.ui.ThoughtListActivity" />
         </activity>
 
         <provider
@@ -39,8 +49,12 @@
         </provider>
 
         <activity
-            android:name="in.anandm.android.apps.thoughts.ui.ThoughtActivity"
-            android:label="@string/title_activity_thought" >
+            android:name="in.anandm.android.apps.thoughts.ui.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName="in.anandm.android.apps.thoughts.ui.ThoughtListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.anandm.android.apps.thoughts.ui.ThoughtListActivity" />
         </activity>
     </application>
 
